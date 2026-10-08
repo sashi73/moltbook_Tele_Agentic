@@ -9,7 +9,7 @@ from memory import save_knowledge, log_moltbook_post
 # ---------------------------------------------------------------------------
 # Load environment variables from .env (must happen BEFORE reading them)
 # ---------------------------------------------------------------------------
-load_dotenv()  # looks for .env in the current working directory
+load_dotenv()
 
 MODEL_NAME        = os.environ.get("OLLAMA_MODEL", "llama3.2:3b")
 MOLTBOOK_BASE_URL = os.environ.get("MOLTBOOK_URL", "https://www.moltbook.com")
@@ -20,7 +20,6 @@ MOLTBOOK_API_KEY  = os.environ.get("MOLTBOOK_API_KEY")
 # Config sanity check
 # ---------------------------------------------------------------------------
 def print_config():
-    """Prints a quick summary of the loaded configuration."""
     print("=" * 70)
     print("[CONFIG] Loaded from .env")
     print(f"  Model            : {MODEL_NAME}")
@@ -37,10 +36,6 @@ def print_config():
 # Moltbook connection check
 # ---------------------------------------------------------------------------
 def check_moltbook_connection():
-    """
-    Verifies the Moltbook API key is present and that the server responds.
-    Prints a clear 'connected' message on success, or an explanation on failure.
-    """
     print("[Moltbook] Checking connection...")
 
     if not MOLTBOOK_API_KEY:
@@ -98,7 +93,6 @@ def check_moltbook_connection():
 # Core agent logic
 # ---------------------------------------------------------------------------
 def think_and_learn(subject):
-    """Asks the model about the subject and checks if it needs external help."""
     if not subject or not subject.strip():
         return "No subject provided."
 
@@ -131,7 +125,6 @@ def think_and_learn(subject):
 
 
 def post_to_moltbook(question):
-    """Posts the agent's knowledge gap to the Moltbook API."""
     if not MOLTBOOK_API_KEY:
         print("[Moltbook] No API key set; skipping post.")
         return None
@@ -171,7 +164,6 @@ def post_to_moltbook(question):
 # Smoke test
 # ---------------------------------------------------------------------------
 def test_model_with_prompt(user_prompt: str):
-    """Sends a single prompt to the model and prints the reply + diagnostics."""
     print("=" * 70)
     print(f"[TEST] Model   : {MODEL_NAME}")
     print(f"[TEST] Prompt  : {user_prompt}")
@@ -210,13 +202,8 @@ def test_model_with_prompt(user_prompt: str):
 
 
 if __name__ == "__main__":
-    # 1) Show config so you can see the .env loaded correctly
     print_config()
     print()
-
-    # 2) Check Moltbook connection FIRST
     check_moltbook_connection()
     print()
-
-    # 3) Test the model
     test_model_with_prompt("Is Gandhi and Mandela similar?")

@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Oct 28 00:40:23 2020
-
-@author: Sashi
-"""
 import sqlite3
 from datetime import datetime
 
 DB_NAME = "agent_memory.db"
 
+
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    
+
     # Stores daily topics and the agent's synthesised understanding
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS knowledge_base (
@@ -22,7 +17,7 @@ def init_db():
             timestamp TEXT
         )
     ''')
-    
+
     # Stores pending questions posted to Moltbook to check for answers later
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS moltbook_queries (
@@ -33,11 +28,11 @@ def init_db():
             timestamp TEXT
         )
     ''')
-    
+
     conn.commit()
     conn.close()
-    
-    print("Table has been successfully created.")
+    print("✅ Database tables ready.")
+
 
 def save_knowledge(subject, summary):
     conn = sqlite3.connect(DB_NAME)
@@ -51,6 +46,7 @@ def save_knowledge(subject, summary):
     finally:
         conn.close()
 
+
 def log_moltbook_post(question, post_id):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -60,6 +56,3 @@ def log_moltbook_post(question, post_id):
     )
     conn.commit()
     conn.close()
-
-if __name__ == "__main__":
-    init_db()
