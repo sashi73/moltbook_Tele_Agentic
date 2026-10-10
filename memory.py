@@ -8,18 +8,16 @@ def init_db():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    # Stores daily topics and the agent's synthesised understanding
-    cursor.execute('''
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS knowledge_base (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             subject TEXT UNIQUE,
             summary TEXT,
             timestamp TEXT
         )
-    ''')
+    """)
 
-    # Stores pending questions posted to Moltbook to check for answers later
-    cursor.execute('''
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS moltbook_queries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             question TEXT,
@@ -27,11 +25,24 @@ def init_db():
             status TEXT DEFAULT 'pending',
             timestamp TEXT
         )
-    ''')
+    """)
 
     conn.commit()
     conn.close()
     print("✅ Database tables ready.")
+
+
+def _migrate_schema():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE moltbook_queries ADD COLUMN verification_status TEXT DEFAULT 'pending'")
+        conn.commit()
+        print("✅ Added verification_status column.")
+    except sqlite3.OperationalError:
+        pass  # already exists
+    finally:
+        conn.close()
 
 
 def save_knowledge(subject, summary):
@@ -56,3 +67,21 @@ def log_moltbook_post(question, post_id):
     )
     conn.commit()
     conn.close()
+
+
+def update_moltbook_status(post_id, status):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "UPDATE moltbook_queries SET verification_status = ? WHERE post_id = ?",
+            (status, post_id)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+# Run on import
+init_db()
+_migrate_schema()

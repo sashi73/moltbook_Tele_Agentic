@@ -1,4 +1,33 @@
+# ---- Secrets: NEVER upload ----
 .env
-agent_memory.db
+.env.*
+!.env.example
+*.key
+
+# ---- Python environment and caches ----
+venv/
+.venv/
+env/
 __pycache__/
 *.pyc
+
+# ---- Private or personal data the bots create ----
+telegram_chat.json
+heartbeat_state.json
+*.lock
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*_usage.jsonl
+search_usage.jsonl
+moltbook_failures.json
+
+# ---- Generated pictures ----
+x_cards/
+
+# ---- Editors and Windows ----
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
